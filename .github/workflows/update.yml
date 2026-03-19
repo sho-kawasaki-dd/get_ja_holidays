@@ -1,0 +1,35 @@
+name: Update Holidays JSON
+
+on:
+  schedule:
+    - cron: '0 0 1 * *' # 毎月1日のUTC 0時（日本時間9時）に実行
+  workflow_dispatch: # GitHubのWebUIから手動実行するための設定
+
+permissions:
+  contents: write # ボットがリポジトリにコミットするための権限
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install holidays
+
+      - name: Generate JSON
+        run: python generate_ja_holidays.py
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add public/holidays.json
+          # 差分がある場合のみコミットとプッシュを実行する
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update holidays.json" && git push)
