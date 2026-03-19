@@ -19,7 +19,7 @@ def generate_holidays():
     
     # publicディレクトリを作成してJSONを保存
     os.makedirs("public", exist_ok=True)
-    with open("public/holidays.json", "w", encoding="utf-8") as f:
+    with open("public/ja_holidays.json", "w", encoding="utf-8") as f:
         json.dump(holiday_list, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
